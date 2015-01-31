@@ -48,8 +48,11 @@ function get_hackerspaces(params) {
             lat: results['query']['results'][i]['printouts']['location'][0]['lat'],
             lon: results['query']['results'][i]['printouts']['location'][0]['lon'],
             city: results['query']['results'][i]['printouts']['city'][0]['fulltext'],
-            city_url: results['query']['results'][i]['printouts']['city'][0]['fullurl']
+            city_url: results['query']['results'][i]['printouts']['city'][0]['fullurl'],
+            exchanges: results['query']['results'][i]['printouts']['exchanges'][0],
+            residencies: results['query']['results'][i]['printouts']['residencies'][0]
 	  };
+
 	  /* save each item to hs */
 	  hs.save(i, h, function(err){}); // keyed on name
 
@@ -60,8 +63,7 @@ function get_hackerspaces(params) {
 	  /* Recursive step, until no further offset */
 	if (offset) {
           params["parameters"] = 'offset%3d' + offset
-          interval = 2000 * (Math.random() + 0.1) // random-ish in milliseconds
-          console.log(interval)
+          interval = 1000 * (Math.random() + 0.1) // random-ish in milliseconds
 	  setTimeout(get_hackerspaces( params ), interval);
 	}
       }
@@ -77,14 +79,20 @@ function convert_hackerspaces_to_geojson(hsdb) {
         console.log(err);
       }
       if (!err) {
-	console.log(GeoJSON.parse([hsobjs], {Point: ['lat', 'lon']} ))
-      //  jsonToGeoJson(body)
-      }
+	  var h = [];
+	  for (s in hsobjs) {
+            s = hsobjs[s]
+            var popupContent = '<a href="' + s['url'] + '" target="_blank">' + s['name'] + '</a><br/>City: <a href="' + s['city_url'] + '" target="_blank">' + s['city'] + '</a><br/>Email: <a href="' + s['email'] + '">contact</a><br/>Phone: ' + s['phone'] +  '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Exchanges</a>: ' + s['exchanges'] + '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Residencies</a>: ' + s['residencies'];
+	    s['popupContent'] = popupContent
+	    h.push(s)
+	  };
+	}
+      hgeo = GeoJSON.parse(h, {Point: ['lat', 'lon'], include: ['name', 'url', 'email', 'phone', 'city', 'city_url', 'popupContent']});
+      hsgeo.save("geojson", hgeo, function(err){});
     })
   }
 }
 
-convert_hackerspaces_to_geojson(hs)
 
 /*
 { "type": "FeatureCollection",
@@ -100,7 +108,8 @@ convert_hackerspaces_to_geojson(hs)
 /* Execute! */
 
 /* Get hackerspaces data for each set of query parameters! */
-// var queries = [ exchanges_params, residencies_params ];
-// queries.forEach(function(entry) { get_hackerspaces(entry) });
+var queries = [ exchanges_params, residencies_params ];
+queries.forEach(function(entry) { get_hackerspaces(entry) });
 
-
+/* Convert json from api to geojson */
+convert_hackerspaces_to_geojson(hs)
