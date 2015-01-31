@@ -1,0 +1,43 @@
+<html>
+<head>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js" type="text/javascript"></script>
+	<script src="http://code.jquery.com/jquery-2.1.0.min.js" type="text/javascript"></script>
+	<script src="hackerspaces_geo.js" type="text/javascript"></script>
+	<style type="text/css">
+		html, body {height: 100%;overflow: hidden;}
+		#map {height: 100%;}
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script>
+	//helper functions
+	var d = new Date();
+	var year = d.getFullYear();
+
+	function popup(feature, layer) {
+	    if (feature.properties && feature.properties.popupContent) {
+		layer.bindPopup(feature.properties.popupContent);
+	    }
+	}
+
+	// map
+	var map = new L.Map('map', {
+		center: [0,0],
+		zoom: 2
+	});
+
+	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+		attribution: '<!--[if lte IE 8]><span style="filter: FlipH; -ms-filter: "FlipH"; display: inline-block;"><![endif]--><span style="-moz-transform: scaleX(-1); -o-transform: scaleX(-1); -webkit-transform: scaleX(-1); transform: scaleX(-1); display: inline-block;">©</span><!--[if lte IE 8]></span><![endif]--> CopyLeft <a href="://x.chgrp.org"><abbr>x.chgrp.org</abbr></a>, All Wrongs Reversed, ' + year + '.'
+	}).addTo(map);
+
+	console.log();
+
+	L.geoJson(points, {
+	  onEachFeature: popup
+	}).addTo(map);
+
+	</script>
+</body>
+</html>
