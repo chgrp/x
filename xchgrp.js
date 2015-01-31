@@ -82,7 +82,7 @@ function convert_hackerspaces_to_geojson(hsdb) {
 	  var h = [];
 	  for (s in hsobjs) {
             s = hsobjs[s]
-            var popupContent = '<a href="' + s['url'] + '" target="_blank">' + s['name'] + '</a><br/>City: <a href="' + s['city_url'] + '" target="_blank">' + s['city'] + '</a><br/>Email: <a href="' + s['email'] + '">contact</a><br/>Phone: ' + s['phone'] +  '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Exchanges</a>: ' + s['exchanges'] + '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Residencies</a>: ' + s['residencies'];
+            var popupContent = '<a href="' + s['url'] + '" target="_blank">' + s['name'] + '</a><br/>City: <a href="' + s['city_url'] + '" target="_blank">' + s['city'] + '</a><br/>Email: <a href="' + s['email'] + '">contact</a><br/>Phone: ' + s['phone'] +  '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Exchanges</a>: ' + s['exchanges'] + '<br/><a href="http://hackerspaces.org/wiki/Residencies" target="_blank">Residencies</a>: ' + s['residencies'];
 	    s['popupContent'] = popupContent
 	    h.push(s)
 	  };
