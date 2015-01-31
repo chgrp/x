@@ -1,0 +1,18 @@
+{
+  "name": "xchgrp",
+  "version": "0.0.0",
+  "description": "basic application to expose and encourage interaction among hackerspaces who are open to residencies and exchanges.",
+  "main": "xchgrp.js",
+  "dependencies": {
+    "geojson": "~0.1.4",
+    "jfs": "~0.2.5",
+    "qs": "~2.3.3",
+    "request": "~2.27.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "wrought",
+  "license": "GPLv3"
+}
