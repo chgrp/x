@@ -71,9 +71,8 @@ function get_hackerspaces(params) {
   )
 }
 
-
 function convert_hackerspaces_to_geojson(hsdb) {
-  if (hsdb) {
+  if (Object.keys(hsdb.allSync()).length) {
     hsdb.all(function(err, hsobjs) {
       if (err) {
         console.log(err);
