@@ -4,11 +4,13 @@ var Qs = require("qs"); // for query strings
 var GeoJSON = require("geojson");
 var Store = require("jfs") // JSON file store
 
+/* https hack */
+
 /* Setup vars */
 var hs = new Store("./hackerspaces.json",{pretty:true});
 var hsgeo = new Store("./hackerspaces_geo.json",{pretty:true});
 
-var hackerspaces_endpoint = "http://hackerspaces.org/w/api.php"
+var hackerspaces_endpoint = "https://wiki.hackerspaces.org/w/api.php"
 
 var exchanges_params = {
   action: 'askargs',
@@ -30,12 +32,16 @@ var residencies_params = {
    save items to json file store */
 function get_hackerspaces(params) {
   var query = hackerspaces_endpoint + "?" + decodeURIComponent(Qs.stringify(params));
-  request( query,
+  request({
+    "rejectUnauthorized": false, // Security warning!!! Only use for innocuous / GET / read-only requests!!!
+    "url": query,
+    "method": "GET",
+    },
     function (error, response, body) {
       if (error) {
         console.log(error)
         }
-        if (!error && response.statusCode == 200) {
+      if (!error && response.statusCode == 200) {
         // console.log(body)
         var results = JSON.parse(body);
         for(i in results['query']['results']) {
@@ -59,6 +65,9 @@ function get_hackerspaces(params) {
           /* set offset for recursion */
 	  offset = results['query-continue-offset']
 
+          /* logging */
+          console.log(h);
+
           }
 	  /* Recursive step, until no further offset */
 	if (offset) {
@@ -81,7 +90,7 @@ function convert_hackerspaces_to_geojson(hsdb) {
 	  var h = [];
 	  for (s in hsobjs) {
             s = hsobjs[s]
-            var popupContent = '<a href="' + s['url'] + '" target="_blank">' + s['name'] + '</a><br/>City: <a href="' + s['city_url'] + '" target="_blank">' + s['city'] + '</a><br/>Email: <a href="' + s['email'] + '">contact</a><br/>Phone: ' + s['phone'] +  '<br/><a href="http://hackerspaces.org/wiki/Exchanges" target="_blank">Exchanges</a>: ' + s['exchanges'] + '<br/><a href="http://hackerspaces.org/wiki/Residencies" target="_blank">Residencies</a>: ' + s['residencies'];
+            var popupContent = '<a href="' + s['url'] + '" target="_blank">' + s['name'] + '</a><br/>City: <a href="' + s['city_url'] + '" target="_blank">' + s['city'] + '</a><br/>Email: <a href="' + s['email'] + '">contact</a><br/>Phone: ' + s['phone'] +  '<br/><a href="https://wiki.hackerspaces.org/wiki/Exchanges" target="_blank">Exchanges</a>: ' + s['exchanges'] + '<br/><a href="https://wiki.hackerspaces.org/wiki/Residencies" target="_blank">Residencies</a>: ' + s['residencies'];
 	    s['popupContent'] = popupContent
 	    h.push(s)
 	  };
@@ -108,7 +117,7 @@ function convert_hackerspaces_to_geojson(hsdb) {
 
 /* Get hackerspaces data for each set of query parameters! */
 var queries = [ exchanges_params, residencies_params ];
-queries.forEach(function(entry) { get_hackerspaces(entry) });
+//queries.forEach(function(entry) { get_hackerspaces(entry) });
 
 /* Convert json from api to geojson */
 convert_hackerspaces_to_geojson(hs)
